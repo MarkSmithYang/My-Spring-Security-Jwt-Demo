@@ -2,7 +2,6 @@ package com.yb.springsecurity.jwt.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.security.Permissions;
 import java.util.Set;
 
 /**
@@ -31,15 +30,13 @@ public class Permission implements Serializable {
     /**
      * 权限角色
      */
-    @Transient
-//    @ManyToMany
+    @ManyToMany(targetEntity = Role.class, mappedBy = "permissions")
     private Set<Role> roles;
 
     /**
      * 权限用户
      */
-    @Transient
-//    @ManyToMany(targetEntity =SysUser.class)
+    @ManyToMany(targetEntity = SysUser.class)
     private Set<SysUser> users;
 
     public String getId() {

@@ -37,8 +37,7 @@ public class SysUser implements Serializable {
     /**
      * 用户权限
      */
-//    @ManyToMany
-    @Transient
+    @ManyToMany(targetEntity = Permission.class,mappedBy = "users")
     private Set<Permission> permissions;
 
     /**

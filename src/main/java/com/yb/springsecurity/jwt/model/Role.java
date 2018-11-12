@@ -31,14 +31,13 @@ public class Role implements Serializable {
     /**
      * 角色权限
      */
-    @Transient
-//    @ManyToMany(targetEntity = Permission.class)
+    @ManyToMany(targetEntity = Permission.class)
     private Set<Permission> permissions;
 
     /**
      * 角色用户
      */
-    @ManyToMany(targetEntity = SysUser.class,mappedBy = "roles")
+    @ManyToMany(targetEntity = SysUser.class, mappedBy = "roles")
     private Set<SysUser> users;
 
     public String getId() {
