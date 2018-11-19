@@ -2,7 +2,6 @@ package com.yb.springsecurity.jwt.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.security.Permissions;
 import java.util.Set;
 
 /**
