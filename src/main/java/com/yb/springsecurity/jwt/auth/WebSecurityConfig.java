@@ -1,13 +1,20 @@
 package com.yb.springsecurity.jwt.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
+
+import javax.swing.*;
+import java.io.Serializable;
 
 /**
  * @author yangbiao
@@ -18,21 +25,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private AuthenticationEntryPointImpl authenticationEntryPoint;
+    @Autowired
+    private AccessDeniedHandlerImpl AccessDeniedHandlerImpl;
+    @Autowired
+    private RedisTemplate<String, Serializable> redisTemplate;
+
     /**
      * 设置 HTTP 验证规则
-     * @param http
-     * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // 关闭csrf验证
+        //解决SpringBoot不允许加载iframe问题
+        http.headers().frameOptions().disable();
+        //关闭默认的登录认证
+        http.httpBasic().disable()
+                //添加处理ajxa的类实例
+                .exceptionHandling().accessDeniedHandler(AccessDeniedHandlerImpl)
+                //添加拦截未登录用户访问的提示类实例
+                .authenticationEntryPoint(authenticationEntryPoint).and()
+                //添加改session为redis存储实例
+                .securityContext().securityContextRepository(new RedisSecurityContextRepository(redisTemplate)).and()
+                //把session的代理创建关闭
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+
+        // 关闭csrf验证,我们用jwt的token就不需要了
         http.csrf().disable()
                 //对请求进行认证
                 .authorizeRequests()
                 //所有带/的请求都放行
                 .antMatchers("/").permitAll()
                 //所有/login的post请求都放行
-                .antMatchers(HttpMethod.POST,"/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
                 //访问指定路径的权限校验
                 .antMatchers("/hello").hasAnyAuthority("write")
                 //访问指定路径的权限校验
@@ -47,15 +72,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated().and()
                 //添加一个过滤器,所有访问/login的请求都交给JWTLoginFilter来处理
                 //这个处理所有JWT相关内容
-                .addFilterBefore(new JWTLoginFilter("/login",authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
                 //添加一个过滤器,对其他请求的token进行合法性认证
-                .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
+                .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .formLogin().loginPage("/login")
+                .and().logout()
+                .logoutUrl("/logout");
     }
 
     /**
      * 使用自定义身份验证组件
+     *
      * @param auth
      * @throws Exception
      */

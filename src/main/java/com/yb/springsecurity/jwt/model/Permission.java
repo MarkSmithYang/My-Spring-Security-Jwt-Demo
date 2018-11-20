@@ -30,14 +30,20 @@ public class Permission implements Serializable {
     /**
      * 权限角色
      */
-    @ManyToMany(targetEntity = Role.class, mappedBy = "permissions")
+    @ManyToMany(targetEntity = Role.class, mappedBy = "permissions",fetch = FetchType.LAZY)
     private Set<Role> roles;
 
     /**
      * 权限用户
      */
-    @ManyToMany(targetEntity = SysUser.class)
+    @ManyToMany(targetEntity = SysUser.class,fetch = FetchType.LAZY)
     private Set<SysUser> users;
+
+    /**
+     * 权限模块
+     */
+    @ManyToMany(targetEntity = Module.class,fetch = FetchType.LAZY)
+    private Set<Module> modules;
 
     public String getId() {
         return id;
@@ -77,5 +83,13 @@ public class Permission implements Serializable {
 
     public void setUsers(Set<SysUser> users) {
         this.users = users;
+    }
+
+    public Set<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(Set<Module> modules) {
+        this.modules = modules;
     }
 }

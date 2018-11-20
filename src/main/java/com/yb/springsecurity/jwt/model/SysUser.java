@@ -37,13 +37,13 @@ public class SysUser implements Serializable {
     /**
      * 用户权限
      */
-    @ManyToMany(targetEntity = Permission.class,mappedBy = "users")
+    @ManyToMany(targetEntity = Permission.class,mappedBy = "users",fetch = FetchType.EAGER)
     private Set<Permission> permissions;
 
     /**
      * 用户角色
      */
-    @ManyToMany(targetEntity = Role.class)
+    @ManyToMany(targetEntity = Role.class,fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public SysUser() {

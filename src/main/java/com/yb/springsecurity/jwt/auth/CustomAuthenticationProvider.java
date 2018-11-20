@@ -1,6 +1,6 @@
 package com.yb.springsecurity.jwt.auth;
 
-import com.yb.springsecurity.jwt.common.PasswordEncryptUtils;
+import com.yb.springsecurity.jwt.utils.PasswordEncryptUtils;
 import com.yb.springsecurity.jwt.exception.ParameterErrorException;
 import com.yb.springsecurity.jwt.model.Permission;
 import com.yb.springsecurity.jwt.model.Role;
@@ -15,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

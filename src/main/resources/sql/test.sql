@@ -10,10 +10,32 @@ Target Server Type    : MYSQL
 Target Server Version : 50605
 File Encoding         : 65001
 
-Date: 2018-11-19 18:33:29
+Date: 2018-11-20 18:30:37
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for module
+-- ----------------------------
+DROP TABLE IF EXISTS `module`;
+CREATE TABLE `module` (
+`id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`module`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`module_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+
+;
+
+-- ----------------------------
+-- Records of module
+-- ----------------------------
+BEGIN;
+INSERT INTO `module` VALUES ('1', 'first', '一级模块'), ('2', 'second', '二级模块');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for permission
@@ -35,6 +57,30 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- ----------------------------
 BEGIN;
 INSERT INTO `permission` VALUES ('1', 'write', '写的权限'), ('2', 'read', '读的权限');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for permission_modules
+-- ----------------------------
+DROP TABLE IF EXISTS `permission_modules`;
+CREATE TABLE `permission_modules` (
+`permissions_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`modules_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+PRIMARY KEY (`permissions_id`, `modules_id`),
+FOREIGN KEY (`permissions_id`) REFERENCES `permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+FOREIGN KEY (`modules_id`) REFERENCES `module` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+INDEX `FK68s18la6flmsnh1hisogsyuea` (`modules_id`) USING BTREE 
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+
+;
+
+-- ----------------------------
+-- Records of permission_modules
+-- ----------------------------
+BEGIN;
+INSERT INTO `permission_modules` VALUES ('2', '1'), ('1', '2'), ('2', '2');
 COMMIT;
 
 -- ----------------------------

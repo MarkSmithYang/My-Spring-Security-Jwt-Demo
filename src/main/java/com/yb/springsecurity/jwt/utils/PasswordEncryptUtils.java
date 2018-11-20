@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt.common;
+package com.yb.springsecurity.jwt.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

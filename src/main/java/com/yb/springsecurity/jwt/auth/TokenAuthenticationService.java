@@ -16,12 +16,16 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yangbiao
- * @Description:Token的生成认证服务
+ * @Description:Token的生成认证服务--JWT登录过滤和认证的过滤会用到它生成JWT
  * @date 2018/11/19
  */
 public class TokenAuthenticationService {
@@ -40,9 +44,9 @@ public class TokenAuthenticationService {
      */
     public static void addAuthentication(HttpServletResponse response, String username) {
         //生成JWT
-        String jwt = Jwts.builder().
-                //保存权限(角色)
-                        claim("authorities", "admin,write")
+        String jwt = Jwts.builder()
+                //保存权限(角色),该方法是往JWT添加key和对应的value
+                .claim("authorities", "admin,write")
                 //添加用户名到主题
                 .setSubject(username)
                 //有效期设置
@@ -50,7 +54,6 @@ public class TokenAuthenticationService {
                 //签名设置
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
-
         //将JWT写入body
         try {
             response.setContentType("applicaton/json");
@@ -82,7 +85,7 @@ public class TokenAuthenticationService {
                     .getBody();
             //获取用户名
             String username = claims.getSubject();
-            //获取权限(角色)信息
+            //获取权限(角色)信息,claims.get("authorities")取的就是之前添加的admin和write
             List<GrantedAuthority> authorities =
                     AuthorityUtils.commaSeparatedStringToAuthorityList((String) claims.get("authorities"));
             //返回验证令牌
