@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt.auth;
+package com.yb.springsecurity.jwt.authsecurity;
 
 import com.yb.springsecurity.jwt.common.HeaderName;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.util.WebUtils;

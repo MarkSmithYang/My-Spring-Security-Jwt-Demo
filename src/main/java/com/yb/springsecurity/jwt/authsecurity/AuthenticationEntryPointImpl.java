@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt.auth;
+package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         JSONObject jsonObject = new JSONObject(true);
         jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
         jsonObject.put("message", "请登录");
+        response.sendError(HttpServletResponse.SC_OK, "哈哈哈哈哈哈");
         //处理输出到页面
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type","application/json;charset=UTF-8");

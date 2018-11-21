@@ -1,7 +1,6 @@
-package com.yb.springsecurity.jwt.auth;
+package com.yb.springsecurity.jwt.authsecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
@@ -11,9 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.client.RestTemplate;
 
-import javax.swing.*;
 import java.io.Serializable;
 
 /**
@@ -33,7 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RedisTemplate<String, Serializable> redisTemplate;
 
     /**
-     * 设置 HTTP 验证规则
+     * 设置 HTTP 验证规则,用户模板最好在controller类上添加一层访问的路径,例如/security/**
+     * 这样在放开登录注册等接口的时候,就不容易造成放开一些不必要的接口服务
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -82,7 +80,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * 使用自定义身份验证组件
-     *
+     * Spring Security中进行身份验证的是AuthenticationManager接口，ProviderManager是它的一个默认实现，
+     * 但它并不用来处理身份认证，而是委托给配置好的AuthenticationProvider，每个AuthenticationProvider
+     * 会轮流检查身份认证。检查后或者返回Authentication对象或者抛出异常。
      * @param auth
      * @throws Exception
      */

@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt.auth;
+package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.yb.springsecurity.jwt.model.Module;
@@ -8,7 +8,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Set;
  * @date 2018/11/20
  */
 @Component
-@Order(10000)
 public class ApplicationRunnerImpl implements ApplicationRunner {
     private static Set<String> sys_PERMISSIONS = null;
     private static Set<String> sys_modules = null;
@@ -35,9 +33,6 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Set<String> optionNames = args.getOptionNames();
-        System.err.println(optionNames);
-        //
         List<Module> all = moduleRepository.findAll();
         if(CollectionUtils.isNotEmpty(all)){
             all.forEach(s->{

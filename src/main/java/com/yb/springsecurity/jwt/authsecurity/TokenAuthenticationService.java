@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt.auth;
+package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yb.springsecurity.jwt.common.ResultInfo;
@@ -16,12 +16,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author yangbiao
