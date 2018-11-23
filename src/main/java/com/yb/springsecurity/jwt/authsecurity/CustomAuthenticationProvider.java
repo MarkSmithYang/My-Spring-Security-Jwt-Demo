@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Set;
  * @Description:自定义身份认证类
  * @date 2018/11/19
  */
+@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     public static final Logger log = LoggerFactory.getLogger(CustomAuthenticationProvider.class);
 

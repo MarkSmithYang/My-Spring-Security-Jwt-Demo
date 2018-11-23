@@ -36,14 +36,6 @@ public class UserRequest {
     @ApiModelProperty("是否记住密码")
     private boolean isRemember = false;
 
-    /**
-     * 验证码--这里设置登录错误三次就需要输入验证码,防止程序攻击
-     */
-    @Length(max = 10, message = "验证码输入有误")
-    @NotBlank(message = "验证码不能为空")
-    @ApiModelProperty("验证码")
-    private String verifyCode;
-
     public String getUsername() {
         return username;
     }
@@ -70,15 +62,5 @@ public class UserRequest {
 
     public void setRemember(boolean remember) {
         isRemember = remember;
-    }
-
-    public String getVerifyCode() {
-        return verifyCode;
-    }
-
-    public void setVerifyCode(String verifyCode) {
-        if (StringUtils.isNotBlank(verifyCode)) {
-            this.verifyCode = verifyCode.trim();
-        }
     }
 }

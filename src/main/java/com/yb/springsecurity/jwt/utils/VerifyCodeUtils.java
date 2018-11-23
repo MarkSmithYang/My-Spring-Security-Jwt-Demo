@@ -261,10 +261,10 @@ public class VerifyCodeUtils {
 
 	private static void shearY(Graphics g, int w1, int h1, Color color) {
 
-		int period = random.nextInt(40) + 10; // 50;
+		int period = random.nextInt(30) + 10; // 40;
 
 		boolean borderGap = true;
-		int frames = 20;
+		int frames = 15;
 		int phase = 7;
 		for (int i = 0; i < w1; i++) {
 			double d = (double) (period >> 1)
