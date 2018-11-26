@@ -31,6 +31,16 @@ public class globalExceptionHandler {
         return jsonObject;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RetryTimeException.class)
+    public JSONObject retryTimeExceptionHandler(RetryTimeException e) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", HttpStatus.BAD_REQUEST.value());
+        //这里的获取到的信息就是自定义的信息,因为父类的信息被覆盖了
+        jsonObject.put("message", e.getMessage());
+        return jsonObject;
+    }
+
     /**
      * jwt验证秘钥(签名)异常
      */

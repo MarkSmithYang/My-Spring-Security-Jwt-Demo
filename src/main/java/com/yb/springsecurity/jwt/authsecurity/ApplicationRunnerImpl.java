@@ -21,15 +21,16 @@ import java.util.Set;
  */
 @Component
 public class ApplicationRunnerImpl implements ApplicationRunner {
-    private static Set<String> sys_PERMISSIONS = null;
-    private static Set<String> sys_modules = null;
-    private static JSONArray module_permissions = null;
+    private static Set<String> SYS_PERMISSIONS = null;
+    private static Set<String> SYS_MODULES = null;
+    private static JSONArray MODULE_PERMISSIONS = null;
 
     @Autowired
     private ModuleRepository moduleRepository;
 
     /**
      * 主要是通过容器启动它也跟着启动这个机制,完成我们想要加载的东西,这里方法参数没有什么用
+     * 目前这里还实践怎么好用
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {

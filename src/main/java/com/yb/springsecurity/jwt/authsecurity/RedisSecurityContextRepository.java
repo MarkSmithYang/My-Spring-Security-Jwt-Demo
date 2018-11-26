@@ -1,6 +1,6 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
-import com.yb.springsecurity.jwt.common.HeaderName;
+import com.yb.springsecurity.jwt.common.CommonDic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.util.WebUtils;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -52,8 +51,8 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
     public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
         HttpServletRequest request = requestResponseHolder.getRequest();
         HttpServletResponse response = requestResponseHolder.getResponse();
-        String token = request.getHeader(HeaderName.HEADER_NAME);
-        SecurityContext context = readSecurityContextFromHeader(request, HeaderName.HEADER_NAME);
+        String token = request.getHeader(CommonDic.HEADER_NAME);
+        SecurityContext context = readSecurityContextFromHeader(request, CommonDic.HEADER_NAME);
 
         if (context == null) {
             if (logger.isDebugEnabled()) {
@@ -100,13 +99,13 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
             return null;
         } else {
             // obj = redisTemplate.opsForValue().get(headerToken);
-            obj = redisTemplate.opsForHash().get(headerToken, HeaderName.SECURITY_CONTEXT);
+            obj = redisTemplate.opsForHash().get(headerToken, CommonDic.SECURITY_CONTEXT);
             if (obj == null) {
                 if (debug) {
                     logger.debug("headerToken returned null object for SPRING_SECURITY_CONTEXT");
                 }
             } else {
-                redisTemplate.expire(headerToken, HeaderName.TOKEN_EXPIRE, TimeUnit.MINUTES);
+                redisTemplate.expire(headerToken, CommonDic.TOKEN_EXPIRE, TimeUnit.MINUTES);
             }
         }
 
@@ -150,11 +149,11 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
 
     @Override
     public boolean containsContext(HttpServletRequest request) {
-        String headerToken = request.getHeader(HeaderName.HEADER_NAME);
+        String headerToken = request.getHeader(CommonDic.HEADER_NAME);
         if (headerToken == null || headerToken.length() < 16) {
             return false;
         }
-        return redisTemplate.opsForHash().get(headerToken, HeaderName.SECURITY_CONTEXT) != null;
+        return redisTemplate.opsForHash().get(headerToken, CommonDic.SECURITY_CONTEXT) != null;
     }
 
     private static class Servlet3SaveToRedisRequestWrapper extends HttpServletRequestWrapper {
@@ -197,7 +196,7 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
         @Override
         protected void saveContext(SecurityContext context) {
             final Authentication authentication = context.getAuthentication();
-            String token = request.getHeader(HeaderName.HEADER_NAME);
+            String token = request.getHeader(CommonDic.HEADER_NAME);
 
             // See SEC-776
             if (authentication == null || trustResolver.isAnonymous(authentication)) {
@@ -214,15 +213,15 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
 
             if (token != null) {
                 if (contextChanged(context)
-                        || redisTemplate.opsForHash().get(token, HeaderName.SECURITY_CONTEXT) == null) {
+                        || redisTemplate.opsForHash().get(token, CommonDic.SECURITY_CONTEXT) == null) {
                     // redisTemplate.opsForValue().set(token, context, 30,
                     // TimeUnit.MINUTES);
-                    redisTemplate.opsForHash().put(token, HeaderName.SECURITY_CONTEXT, context);
+                    redisTemplate.opsForHash().put(token, CommonDic.SECURITY_CONTEXT, context);
                     if (logger.isDebugEnabled()) {
                         logger.debug("SecurityContext '" + context + "' stored to Redis: '" + token);
                     }
                 }
-                redisTemplate.expire(token, HeaderName.TOKEN_EXPIRE, TimeUnit.MINUTES);
+                redisTemplate.expire(token, CommonDic.TOKEN_EXPIRE, TimeUnit.MINUTES);
             }
 
         }

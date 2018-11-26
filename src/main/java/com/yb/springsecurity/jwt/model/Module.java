@@ -1,5 +1,9 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -20,18 +24,50 @@ public class Module implements Serializable {
     /**
      * 模块
      */
+    @ApiModelProperty("模块")
     private String module;
 
     /**
      * 模块中文名
      */
+    @ApiModelProperty("模块中文名")
     private String moduleCn;
+
+    /**
+     * 模块用户
+     */
+    @ApiModelProperty("模块用户")
+    @ManyToMany(targetEntity = SysUser.class,fetch = FetchType.LAZY)
+    private Set<SysUser> users;
 
     /**
      * 模块权限
      */
+    @ApiModelProperty("模块权限")
     @ManyToMany(targetEntity = Permission.class,mappedBy = "modules",fetch = FetchType.EAGER)
     private Set<Permission> permissions;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Module module1 = (Module) o;
+
+        return new EqualsBuilder()
+                .append(id, module1.id)
+                .append(module, module1.module)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(module)
+                .toHashCode();
+    }
 
     public String getId() {
         return id;

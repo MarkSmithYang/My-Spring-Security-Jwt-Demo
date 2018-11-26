@@ -1,5 +1,10 @@
 package com.yb.springsecurity.jwt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -22,28 +27,51 @@ public class SysUser implements Serializable {
     /**
      * 用户名
      */
+    @ApiModelProperty("用户名")
     private String username;
 
     /**
      * 密码
      */
+    @JsonIgnore
+    @ApiModelProperty("密码")
     private String password;
+
+    /**
+     * 头像信息
+     */
+    @ApiModelProperty("头像信息")
+    private String headUrl;
 
     /**
      * 创建时间
      */
+    @ApiModelProperty("创建时间")
     private LocalDateTime createTime;
+
+    @ApiModelProperty("用户基本详细信息")
+    @OneToOne(targetEntity = UserInfo.class)
+    private UserInfo userInfo;
+
+    /**
+     * 用户模块(用户可以访问的菜单(模块),这个是另一种授权方式)
+     */
+    @ApiModelProperty("用户模块")
+    @ManyToMany(targetEntity = Module.class, mappedBy = "users", fetch = FetchType.EAGER)
+    private Set<Module> modules;
 
     /**
      * 用户权限
      */
-    @ManyToMany(targetEntity = Permission.class,mappedBy = "users",fetch = FetchType.EAGER)
+    @ApiModelProperty("用户权限")
+    @ManyToMany(targetEntity = Permission.class, mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Permission> permissions;
 
     /**
      * 用户角色
      */
-    @ManyToMany(targetEntity = Role.class,fetch = FetchType.EAGER)
+    @ApiModelProperty("用户角色")
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public SysUser() {
@@ -56,6 +84,28 @@ public class SysUser implements Serializable {
         this.username = username;
         this.password = password;
         this.createTime = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SysUser sysUser = (SysUser) o;
+
+        return new EqualsBuilder()
+                .append(id, sysUser.id)
+                .append(username, sysUser.username)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(username)
+                .toHashCode();
     }
 
     public String getId() {
@@ -104,5 +154,29 @@ public class SysUser implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public Set<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(Set<Module> modules) {
+        this.modules = modules;
     }
 }

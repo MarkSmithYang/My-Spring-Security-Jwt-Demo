@@ -1,12 +1,10 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
+import com.yb.springsecurity.jwt.service.UserDetailsServiceImpl;
 import com.yb.springsecurity.jwt.utils.PasswordEncryptUtils;
 import com.yb.springsecurity.jwt.exception.ParameterErrorException;
-import com.yb.springsecurity.jwt.model.Permission;
-import com.yb.springsecurity.jwt.model.Role;
 import com.yb.springsecurity.jwt.model.SysUser;
 import com.yb.springsecurity.jwt.repository.SysUserRepository;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +13,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * @author yangbiao
@@ -32,16 +29,30 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private SysUserRepository sysUserRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
+    /**
+     * 自定义认证的实现方法
+     *
+     * @param authentication
+     * @return
+     * @throws AuthenticationException
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         //获取需要认证的用户名
-        String username = authentication.getName();
-        String name = (String) authentication.getPrincipal();
-        String pwd = (String) authentication.getCredentials();
+        String username = (String) authentication.getPrincipal();
         //获取需要认证的密码
         String password = authentication.getCredentials().toString();
-        //进行自定义的逻辑认证
+        //获取from
+        String from = null;
+        //判断参数是否属于自定义的token,是则强转获取from
+        //(因为是用这个new MyUsernamePasswordAuthenticationToken传递进来的,其实不用判断所属也可以直接强转的)
+        if (authentication instanceof MyUsernamePasswordAuthenticationToken) {
+            from = ((MyUsernamePasswordAuthenticationToken) authentication).getFrom();
+        }
+        //进行自定义的逻辑认证--(如果用户名可能是电话号码,邮箱地址,用户名,这个需要逐个去查询判断)
         SysUser sysUser = sysUserRepository.findByUsername(username);
         //判断用户名是否正确
         if (sysUser == null) {
@@ -51,32 +62,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!PasswordEncryptUtils.matchPassword(password, sysUser.getPassword())) {
             ParameterErrorException.message("用户名或密码错误");
         }
-        //实例化一个装权限的集合类型为GranteAuthority
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        //获取用户权限
-        Set<Permission> permissions = sysUser.getPermissions();
-        //遍历获取权限添加到authorities
-        if (CollectionUtils.isNotEmpty(permissions)) {
-            //我这里没有写实现类来封装直接用了lambda表达式做的实现
-            permissions.forEach(s -> authorities.add(() -> {
-                return s.getPermission();
-            }));
+        //获取Security自带的详情信息(主要是用户名密码一级一些锁定账户,账户是否可用的信息)
+        UserDetails userDetails = userDetailsServiceImpl.loadUserById(sysUser.getId());
+        //获取权限信息-->这里的意思我没有看懂
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        if (authorities.contains(new SimpleGrantedAuthority(from))) {
+            //构造token对象
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    userDetails.getUsername(), userDetails.getPassword(), authorities);
+            //设置用户详情信息
+            token.setDetails(userDetails);
+            //把相关的用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
+            userDetailsServiceImpl.setUserDetailsInfo(sysUser, from);
+            //返回令牌信息
+            return token;
+        } else {
+            ParameterErrorException.message("用户名或面密码错误");
+            return null;
         }
-        //获取用户角色
-        Set<Role> roles = sysUser.getRoles();
-        //获取角色拥有的权限添加到authorities
-        if (CollectionUtils.isNotEmpty(roles)) {
-            roles.forEach(s -> {
-                if (CollectionUtils.isNotEmpty(s.getPermissions())) {
-                    //我这里没有写实现类来封装直接用了lambda表达式做的实现
-                    permissions.forEach(a -> authorities.add(() -> {
-                        return a.getPermission();
-                    }));
-                }
-            });
-        }
-        //构建令牌
-        return new UsernamePasswordAuthenticationToken(username, password, authorities);
     }
 
     @Override

@@ -1,5 +1,9 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -20,30 +24,57 @@ public class Permission implements Serializable {
     /**
      * 权限
      */
+    @ApiModelProperty("权限")
     private String permission;
 
     /**
      * 权限中文
      */
+    @ApiModelProperty("权限中文")
     private String permissionCn;
 
     /**
      * 权限角色
      */
+    @ApiModelProperty("权限角色")
     @ManyToMany(targetEntity = Role.class, mappedBy = "permissions",fetch = FetchType.LAZY)
     private Set<Role> roles;
 
     /**
      * 权限用户
      */
+    @ApiModelProperty("权限用户")
     @ManyToMany(targetEntity = SysUser.class,fetch = FetchType.LAZY)
     private Set<SysUser> users;
 
     /**
      * 权限模块
      */
+    @ApiModelProperty("权限模块")
     @ManyToMany(targetEntity = Module.class,fetch = FetchType.LAZY)
     private Set<Module> modules;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Permission that = (Permission) o;
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(permission, that.permission)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(permission)
+                .toHashCode();
+    }
 
     public String getId() {
         return id;

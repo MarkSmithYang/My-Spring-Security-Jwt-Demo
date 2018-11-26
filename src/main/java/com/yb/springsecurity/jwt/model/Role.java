@@ -1,5 +1,9 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -20,24 +24,50 @@ public class Role implements Serializable {
     /**
      * 角色
      */
+    @ApiModelProperty("角色")
     private String role;
 
     /**
      * 角色中文
      */
+    @ApiModelProperty("角色中文")
     private String roleCn;
 
     /**
      * 角色权限
      */
+    @ApiModelProperty("角色权限")
     @ManyToMany(targetEntity = Permission.class,fetch = FetchType.EAGER)
     private Set<Permission> permissions;
 
     /**
      * 角色用户
      */
+    @ApiModelProperty("角色用户")
     @ManyToMany(targetEntity = SysUser.class, mappedBy = "roles",fetch = FetchType.LAZY)
     private Set<SysUser> users;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Role role1 = (Role) o;
+
+        return new EqualsBuilder()
+                .append(id, role1.id)
+                .append(role, role1.role)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(role)
+                .toHashCode();
+    }
 
     public String getId() {
         return id;

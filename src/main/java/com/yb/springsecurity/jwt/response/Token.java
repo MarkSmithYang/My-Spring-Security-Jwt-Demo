@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Set;
  * @date 2018/11/20
  */
 @ApiModel("登录成功后返信息封装类")
-public class Token{
+public class Token {
 
     /**
      * 用户信息--我这里就只用基本信息了,如果需要用户的详细信息可以自己创建类去封装即可
@@ -25,19 +26,19 @@ public class Token{
      * 用户的角色信息
      */
     @ApiModelProperty("用户的角色信息")
-    private Set<String> roles;
+    private Set<String> roles = new HashSet<>();
 
     /**
      * 用户的权限信息
      */
     @ApiModelProperty("用户的权限信息")
-    private Set<String> permissions;
+    private Set<String> permissions = new HashSet<>();
 
     /**
      * 用户的模块(菜单)信息
      */
     @ApiModelProperty("用户的模块(菜单)信息")
-    private Set<String> modules;
+    private Set<String> modules = new HashSet<>();
 
     /**
      * 是否过期

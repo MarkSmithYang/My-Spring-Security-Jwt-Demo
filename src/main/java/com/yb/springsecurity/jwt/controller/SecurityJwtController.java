@@ -1,6 +1,7 @@
 package com.yb.springsecurity.jwt.controller;
 
 import com.yb.springsecurity.jwt.authsecurity.AntiViolenceCheck;
+import com.yb.springsecurity.jwt.authsecurity.ApplicationRunnerImpl;
 import com.yb.springsecurity.jwt.authsecurity.CustomAuthenticationProvider;
 import com.yb.springsecurity.jwt.common.CommonDic;
 import com.yb.springsecurity.jwt.common.ResultInfo;
@@ -42,10 +43,12 @@ import java.util.concurrent.TimeUnit;
 @CrossOrigin//处理跨域
 @RequestMapping("/security")//添加一层路径是必要的
 public class SecurityJwtController {
- public static final Logger log = LoggerFactory.getLogger(SecurityJwtController.class);
+    public static final Logger log = LoggerFactory.getLogger(SecurityJwtController.class);
 
     @Autowired
     private SecurityJwtService securityJwtService;
+    @Autowired
+    private ApplicationRunnerImpl applicationRunnerImpl;
     @Autowired
     private RedisTemplate<String, Serializable> redisTemplate;
     @Autowired
@@ -110,6 +113,7 @@ public class SecurityJwtController {
     @GetMapping("/frontLogin")
     @ResponseBody
     public ResultInfo<Token> frontLogin(@Valid UserRequest userRequest, HttpServletRequest request) {
+        Token token = null;
         //获取用户名
         String username = userRequest.getUsername();
         //获取用户真实地址
@@ -117,20 +121,22 @@ public class SecurityJwtController {
         //拼接存储key用以存储信息到redis
         String key = CommonDic.LOGIN_SIGN_PRE + ipAddress + username;
         //更新用户登录次数
-        AntiViolenceCheck.updateLoginTimes(redisTemplate,request,username);
+        AntiViolenceCheck.updateLoginTimes(redisTemplate, request, username);
         //根据用户输入的用户名获取用户信息
         SysUser sysUser = securityJwtService.findByUsername(username);
         //判断用户是否存在
-        if(sysUser!=null){
+        if (sysUser != null) {
             //用户登录认证
-            AntiViolenceCheck.authUser(sysUser,request,CommonDic.FROM_FRONT,customAuthenticationProvider);
-        }else {
+            token = AntiViolenceCheck.authUser(sysUser, userRequest, request, CommonDic.FROM_FRONT,
+                    customAuthenticationProvider, redisTemplate);
+        } else {
             //如果登录失败次数大于等于规定的正常次数时,增加登录次数的过期时间
-            AntiViolenceCheck.loginError(key,redisTemplate);
+            AntiViolenceCheck.loginError(key, redisTemplate);
         }
-
-        return ResultInfo.success(null);
+        return ResultInfo.success(token);
     }
+
+    //--------------------------------------------------------------------------------------------------------
 
     @GetMapping("/verifyCodeCheck")
     @ResponseBody
@@ -186,5 +192,4 @@ public class SecurityJwtController {
             e.printStackTrace();
         }
     }
-
 }
