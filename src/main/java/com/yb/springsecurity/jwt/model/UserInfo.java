@@ -2,11 +2,11 @@ package com.yb.springsecurity.jwt.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * Description:用户基本详细信息(根据自己的实际情况封装)
@@ -16,7 +16,8 @@ import javax.persistence.Table;
 @Entity
 @Table
 @ApiModel("用户基本详细信息")
-public class UserInfo {
+public class UserInfo implements Serializable {
+    private static final long serialVersionUID = -5866848556563329530L;
 
     @Id
     @ApiModelProperty("id")

@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -15,6 +16,7 @@ import java.util.Set;
  */
 @Entity
 @Table//这里就使用默认的映射策略
+@ApiModel("模块类--主要是菜单模块分权")
 public class Module implements Serializable {
     private static final long serialVersionUID = -3486259869151800327L;
 
@@ -25,6 +27,7 @@ public class Module implements Serializable {
      * 模块
      */
     @ApiModelProperty("模块")
+    @Column(unique = true)
     private String module;
 
     /**
@@ -37,14 +40,14 @@ public class Module implements Serializable {
      * 模块用户
      */
     @ApiModelProperty("模块用户")
-    @ManyToMany(targetEntity = SysUser.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = SysUser.class, fetch = FetchType.LAZY)
     private Set<SysUser> users;
 
     /**
      * 模块权限
      */
     @ApiModelProperty("模块权限")
-    @ManyToMany(targetEntity = Permission.class,mappedBy = "modules",fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Permission.class, mappedBy = "modules", fetch = FetchType.EAGER)
     private Set<Permission> permissions;
 
     @Override

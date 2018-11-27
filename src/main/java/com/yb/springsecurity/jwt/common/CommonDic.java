@@ -30,8 +30,6 @@ public class CommonDic {
     public static final String _IP_FORBIDDEN_ = "_IP_FORBIDDEN_";
     public static final String _USERNAME_ONE_DAY_FORBIDDEN_ = "_USERNAME_ONE_DAY_FORBIDDEN_";
     public static final String LOGIN_TIMES_PRE = "LOGIN_TIMES_PRE";
-    public static final int FORMAL_LOGIN_TIMES = 4;
-    public static final int CHECK_LOGIN_TIMES = 4;
     //用户详情信息封装类
     public static final String USER_DETAILS_INFO = "USER_DETAILS_INFO";
     public static final String USER_ID = "USER_ID";

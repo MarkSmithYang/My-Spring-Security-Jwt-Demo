@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
+import com.yb.springsecurity.jwt.service.SecurityJwtService;
 import com.yb.springsecurity.jwt.service.UserDetailsServiceImpl;
 import com.yb.springsecurity.jwt.utils.PasswordEncryptUtils;
 import com.yb.springsecurity.jwt.exception.ParameterErrorException;
@@ -16,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 
 /**
@@ -31,13 +33,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private SysUserRepository sysUserRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
+    private SecurityJwtService securityJwtService;
 
     /**
      * 自定义认证的实现方法
-     *
-     * @param authentication
-     * @return
-     * @throws AuthenticationException
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -73,10 +73,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             //设置用户详情信息
             token.setDetails(userDetails);
             //把相关的用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
-            userDetailsServiceImpl.setUserDetailsInfo(sysUser, from);
+            securityJwtService.setUserDetailsInfo(sysUser, from);
             //返回令牌信息
             return token;
         } else {
+            log.info("from包含判断为空");
             ParameterErrorException.message("用户名或面密码错误");
             return null;
         }

@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -15,6 +16,7 @@ import java.util.Set;
  */
 @Entity
 @Table//这里就使用默认的映射策略
+@ApiModel("角色信息表")
 public class Role implements Serializable {
     private static final long serialVersionUID = -1424025425731168559L;
 
@@ -25,6 +27,7 @@ public class Role implements Serializable {
      * 角色
      */
     @ApiModelProperty("角色")
+    @Column(unique = true)
     private String role;
 
     /**

@@ -1,6 +1,7 @@
 package com.yb.springsecurity.jwt.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,6 +19,7 @@ import java.util.UUID;
  */
 @Entity
 @Table//这里就使用默认的映射策略
+@ApiModel("基础用户信息类")
 public class SysUser implements Serializable {
     private static final long serialVersionUID = -4454755005986723821L;
 
@@ -28,6 +30,7 @@ public class SysUser implements Serializable {
      * 用户名
      */
     @ApiModelProperty("用户名")
+    @Column(unique = true)
     private String username;
 
     /**

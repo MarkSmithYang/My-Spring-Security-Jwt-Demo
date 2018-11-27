@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -15,6 +16,7 @@ import java.util.Set;
  */
 @Entity
 @Table//这里就使用默认的映射策略
+@ApiModel("权限信息类")
 public class Permission implements Serializable {
     private static final long serialVersionUID = -5566183753194600505L;
 
@@ -24,6 +26,7 @@ public class Permission implements Serializable {
     /**
      * 权限
      */
+    @Column(unique = true)
     @ApiModelProperty("权限")
     private String permission;
 

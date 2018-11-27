@@ -43,12 +43,9 @@ public class SecurityJwtService {
 
     /**
      * 用户的登录认证
-     *
-     * @param customAuthenticationProvider
-     * @param redisTemplate
      */
-    public Token authUser(SysUser sysUser, UserRequest userRequest, HttpServletRequest request, String from,
-                          CustomAuthenticationProvider customAuthenticationProvider, RedisTemplate<String, Serializable> redisTemplate) {
+    public Token authUser(SysUser sysUser, UserRequest userRequest, String from,CustomAuthenticationProvider
+            customAuthenticationProvider, RedisTemplate<String, Serializable> redisTemplate) {
         //获取获取到的用户名和密码
         String username = userRequest.getUsername();
         String password = userRequest.getPassword();
@@ -58,7 +55,6 @@ public class SecurityJwtService {
         Authentication authenticate = customAuthenticationProvider.authenticate(userToken);
         //把认证信息存储安全上下文
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-
         //存储安全上下文信息到redis上(用SecurityContent的子类)
         SecurityContextImpl securityContext = new SecurityContextImpl();
         securityContext.setAuthentication(authenticate);
@@ -76,13 +72,6 @@ public class SecurityJwtService {
 
     /**
      * 封装用户详细信息到token对象中
-     *
-     * @param redisTemplate
-     * @param token
-     * @param detailsInfo
-     * @param sysUser
-     * @param userRequest
-     * @return
      */
     public Token userToToken(RedisTemplate<String, Serializable> redisTemplate, String token,
                              UserDetailsInfo detailsInfo, SysUser sysUser, UserRequest userRequest) {
@@ -120,9 +109,6 @@ public class SecurityJwtService {
 
     /**
      * 封装用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
-     *
-     * @param sysUser
-     * @param from
      */
     public void setUserDetailsInfo(SysUser sysUser, String from) {
         //实例化封装用户信息的类

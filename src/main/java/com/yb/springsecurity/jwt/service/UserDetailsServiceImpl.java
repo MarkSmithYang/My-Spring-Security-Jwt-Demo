@@ -1,18 +1,14 @@
 package com.yb.springsecurity.jwt.service;
 
-import com.yb.springsecurity.jwt.common.CommonDic;
 import com.yb.springsecurity.jwt.exception.ParameterErrorException;
 import com.yb.springsecurity.jwt.model.Permission;
 import com.yb.springsecurity.jwt.model.Role;
 import com.yb.springsecurity.jwt.model.SysUser;
-import com.yb.springsecurity.jwt.model.UserInfo;
 import com.yb.springsecurity.jwt.repository.SysUserRepository;
-import com.yb.springsecurity.jwt.response.UserDetailsInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,10 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import javax.swing.text.ParagraphView;
-import java.io.Serializable;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,8 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @return
      */
     public UserDetails loadUserById(String id) {
-//        SysUser sysUser = sysUserRepository.findById(id).isPresent() ? sysUserRepository.findById(id).get() : null;
-        SysUser sysUser = sysUserRepository.findOne(id);
+        SysUser sysUser = sysUserRepository.findById(id).isPresent() ? sysUserRepository.findById(id).get() : null;
         if (sysUser == null) {
             log.info("通过用户名查询出来的用户的id去查询用户信息为空(数据前后有改动)");
             ParameterErrorException.message("用户名或密码错误");
@@ -87,7 +78,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 }
             });
         }
-        //this(username, password, true, true, true, true, authorities);如果有需要可以在这里设置账户的锁定等信息
+        //this(username, password, true, true, true, true, authorities);
+        //如果有需要可以在这里设置账户的锁定等信息
         return new User(sysUser.getUsername(), sysUser.getPassword(), authorities);
     }
 }

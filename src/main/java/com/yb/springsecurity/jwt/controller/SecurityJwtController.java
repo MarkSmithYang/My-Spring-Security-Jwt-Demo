@@ -5,11 +5,11 @@ import com.yb.springsecurity.jwt.authsecurity.ApplicationRunnerImpl;
 import com.yb.springsecurity.jwt.authsecurity.CustomAuthenticationProvider;
 import com.yb.springsecurity.jwt.common.CommonDic;
 import com.yb.springsecurity.jwt.common.ResultInfo;
-import com.yb.springsecurity.jwt.exception.ParameterErrorException;
 import com.yb.springsecurity.jwt.model.SysUser;
 import com.yb.springsecurity.jwt.request.UserRequest;
 import com.yb.springsecurity.jwt.response.Token;
 import com.yb.springsecurity.jwt.service.SecurityJwtService;
+import com.yb.springsecurity.jwt.service.UserDetailsServiceImpl;
 import com.yb.springsecurity.jwt.utils.RealIpGetUtils;
 import com.yb.springsecurity.jwt.utils.VerifyCodeUtils;
 import io.swagger.annotations.Api;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +49,8 @@ public class SecurityJwtController {
     @Autowired
     private ApplicationRunnerImpl applicationRunnerImpl;
     @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
     private RedisTemplate<String, Serializable> redisTemplate;
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
@@ -57,18 +58,6 @@ public class SecurityJwtController {
     @GetMapping("/login")
     public String login() {
         return "/login";
-    }
-
-    @GetMapping("/verifyCode")
-    @ResponseBody
-    public void verifyCode(HttpServletResponse response) {
-        String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
-        try {
-            VerifyCodeUtils.outputImage(80, 30, response.getOutputStream(), verifyCode);
-        } catch (IOException e) {
-            log.info("验证码输出异常");
-            e.printStackTrace();
-        }
     }
 
     @ApiOperation("yes的查询")
@@ -120,18 +109,25 @@ public class SecurityJwtController {
         String ipAddress = RealIpGetUtils.getIpAddress(request);
         //拼接存储key用以存储信息到redis
         String key = CommonDic.LOGIN_SIGN_PRE + ipAddress + username;
-        //更新用户登录次数
-        AntiViolenceCheck.updateLoginTimes(redisTemplate, request, username);
+        //检测用户登录次数是否超过指定次数,超过就不再往下验证用户信息
+        AntiViolenceCheck.checkLoginTimes(redisTemplate, key);
+        //检测用户名登录失败次数--->根据自己的需求添加我这里就用一个,其他的注释
+        //AntiViolenceCheck.usernameOneDayForbidden(redisTemplate, username);
+        //检测登录用户再次ip的登录失败的次数
+        //AntiViolenceCheck.ipForbidden(request,redisTemplate);
         //根据用户输入的用户名获取用户信息
         SysUser sysUser = securityJwtService.findByUsername(username);
         //判断用户是否存在
         if (sysUser != null) {
             //用户登录认证
-            token = AntiViolenceCheck.authUser(sysUser, userRequest, request, CommonDic.FROM_FRONT,
+            token = securityJwtService.authUser(sysUser, userRequest, CommonDic.FROM_FRONT,
                     customAuthenticationProvider, redisTemplate);
-        } else {
-            //如果登录失败次数大于等于规定的正常次数时,增加登录次数的过期时间
-            AntiViolenceCheck.loginError(key, redisTemplate);
+            //成功登录后清零用户登录失败(允许次数类)的次数
+            AntiViolenceCheck.checkLoginTimesClear(redisTemplate, key);
+            //成功登录后清零此用户名登录失败的次数
+            //AntiViolenceCheck.usernameOneDayClear(redisTemplate, username);
+            //成功登录后清零此ip登录失败的次数
+            //AntiViolenceCheck.ipForbiddenClear(request, redisTemplate);
         }
         return ResultInfo.success(token);
     }
@@ -161,7 +157,7 @@ public class SecurityJwtController {
     }
 
     @GetMapping("/verifyCode")
-    public void verifyCode(HttpServletResponse response, HttpServletRequest request, Model model) {
+    public void verifyCode(HttpServletResponse response, HttpServletRequest request) {
         Integer times;
         //获取服务ip
         String ipAddress = RealIpGetUtils.getIpAddress(request);
