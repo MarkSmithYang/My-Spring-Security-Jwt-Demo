@@ -66,21 +66,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails = userDetailsServiceImpl.loadUserById(sysUser.getId());
         //获取权限信息-->这里的意思我没有看懂
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        if (authorities.contains(new SimpleGrantedAuthority(from))) {
-            //构造token对象
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                    userDetails.getUsername(), userDetails.getPassword(), authorities);
-            //设置用户详情信息
-            token.setDetails(userDetails);
-            //把相关的用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
-            securityJwtService.setUserDetailsInfo(sysUser, from);
-            //返回令牌信息
-            return token;
-        } else {
-            log.info("from包含判断为空");
-            ParameterErrorException.message("用户名或面密码错误");
-            return null;
-        }
+        //构造token对象
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(), userDetails.getPassword(), authorities);
+        //设置用户详情信息
+        token.setDetails(userDetails);
+        //把相关的用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
+        securityJwtService.setUserDetailsInfo(sysUser, from);
+        //返回令牌信息
+        return token;
     }
 
     @Override

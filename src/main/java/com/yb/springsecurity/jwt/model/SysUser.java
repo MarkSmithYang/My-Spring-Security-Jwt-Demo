@@ -74,7 +74,7 @@ public class SysUser implements Serializable {
      * 用户角色
      */
     @ApiModelProperty("用户角色")
-    @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Role.class,mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public SysUser() {

@@ -53,9 +53,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //对请求进行认证
                 .authorizeRequests()
                 //所有带/的请求都放行
-                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET, "/**",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js").permitAll()
+                .antMatchers().permitAll()
                 //所有/login的post请求都放行
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/security/**").permitAll()
                 //访问指定路径的权限校验
                 .antMatchers("/hello").hasAnyAuthority("write")
                 //访问指定路径的权限校验
@@ -83,6 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Spring Security中进行身份验证的是AuthenticationManager接口，ProviderManager是它的一个默认实现，
      * 但它并不用来处理身份认证，而是委托给配置好的AuthenticationProvider，每个AuthenticationProvider
      * 会轮流检查身份认证。检查后或者返回Authentication对象或者抛出异常。
+     *
      * @param auth
      * @throws Exception
      */

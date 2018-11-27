@@ -45,7 +45,7 @@
             //符合要求的验证码才去校验
             var regExp = new RegExp("^[a-zA-Z0-9]{4}$");
             if (regExp.test(code)) {
-                xhr.open("get", "/verifyCodeCheck?verifyCode=" + code, true);
+                xhr.open("get", "/security/verifyCodeCheck?verifyCode=" + code, true);
                 xhr.send(null);
             }
         }
@@ -76,12 +76,12 @@
             return xhr;
         }
     </script>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"></head></meta>
     <title>我的登录</title>
 </head>
 <body>
 <table>
-    <form action="userLogin" method="post">
+    <form action="/security/frontLogin" method="post">
         <tr>
             <td align="center" colspan="2">
                 <h2 style="color: red">登录中心</h2>
@@ -98,7 +98,7 @@
         <tr>
             <td align="center" id="aa">验证码</td>
             <td><input type="text" id="code" onkeyup="check()"></td>
-            <td><img src="/verifyCode" id="imge" onclick="loadCode(this)"></td>
+            <td><img src="/security/verifyCode" id="imge" onclick="loadCode(this)"></td>
             <td><span style="color: red" id="msg1"></span></td>
         </tr>
         <tr>

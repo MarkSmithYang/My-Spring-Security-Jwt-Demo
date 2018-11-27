@@ -1,15 +1,36 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yb.springsecurity.jwt.controller.SecurityJwtController;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.SecurityReference;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.*;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yangbiao
@@ -18,16 +39,22 @@ import java.io.IOException;
  */
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
+
+    @Autowired
+    private SecurityJwtController securityJwtController;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
-            throws IOException, ServletException {
+            throws IOException {
         JSONObject jsonObject = new JSONObject(true);
         jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
         jsonObject.put("message", "请登录");
-        response.sendError(HttpServletResponse.SC_OK, "哈哈哈哈哈哈");
-        //处理输出到页面
+        //处理输出到页面-->这种方式直接就是把json对象输出到页面,比较原始,不能设置字体颜色等
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type","application/json;charset=UTF-8");
+        response.setHeader("Content-Type", "application/json;charset=UTF-8");
         response.getOutputStream().write(jsonObject.toJSONString().getBytes());
+        //通过此方式可以和error.html配置th:text获取值,但是有点难看
+        //response.sendError(HttpStatus.UNAUTHORIZED.value(), "请登录");
     }
 }
+

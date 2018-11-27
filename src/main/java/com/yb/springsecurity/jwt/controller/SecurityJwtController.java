@@ -10,6 +10,7 @@ import com.yb.springsecurity.jwt.request.UserRequest;
 import com.yb.springsecurity.jwt.response.Token;
 import com.yb.springsecurity.jwt.service.SecurityJwtService;
 import com.yb.springsecurity.jwt.service.UserDetailsServiceImpl;
+import com.yb.springsecurity.jwt.utils.PasswordEncryptUtils;
 import com.yb.springsecurity.jwt.utils.RealIpGetUtils;
 import com.yb.springsecurity.jwt.utils.VerifyCodeUtils;
 import io.swagger.annotations.Api;
@@ -46,10 +47,6 @@ public class SecurityJwtController {
 
     @Autowired
     private SecurityJwtService securityJwtService;
-    @Autowired
-    private ApplicationRunnerImpl applicationRunnerImpl;
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
     private RedisTemplate<String, Serializable> redisTemplate;
     @Autowired
@@ -98,8 +95,13 @@ public class SecurityJwtController {
         }});
     }
 
+    public static void main(String[] args) {
+        String s = PasswordEncryptUtils.passwordEncoder("123");
+        System.err.println(s);
+    }
+
     @ApiOperation("前端登录")
-    @GetMapping("/frontLogin")
+    @PostMapping("/frontLogin")
     @ResponseBody
     public ResultInfo<Token> frontLogin(@Valid UserRequest userRequest, HttpServletRequest request) {
         Token token = null;

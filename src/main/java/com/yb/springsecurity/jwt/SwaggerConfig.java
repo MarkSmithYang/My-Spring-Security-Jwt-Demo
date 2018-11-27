@@ -1,6 +1,5 @@
-package com.yb.springsecurity.jwt.config;
+package com.yb.springsecurity.jwt;
 
-import com.sun.javafx.css.Selector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;

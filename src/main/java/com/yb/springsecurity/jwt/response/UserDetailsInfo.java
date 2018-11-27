@@ -2,6 +2,8 @@ package com.yb.springsecurity.jwt.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +14,8 @@ import java.util.Set;
  * date 2018/11/26
  */
 @ApiModel("返回用户详细信息封装类")
-public class UserDetailsInfo {
+public class UserDetailsInfo implements Serializable {
+    private static final long serialVersionUID = 4313694248931257246L;
 
     @ApiModelProperty("id")
     private String id;

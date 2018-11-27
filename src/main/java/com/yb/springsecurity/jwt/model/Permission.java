@@ -40,7 +40,7 @@ public class Permission implements Serializable {
      * 权限角色
      */
     @ApiModelProperty("权限角色")
-    @ManyToMany(targetEntity = Role.class, mappedBy = "permissions",fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Role.class,fetch = FetchType.LAZY)
     private Set<Role> roles;
 
     /**
