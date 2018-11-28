@@ -1,11 +1,11 @@
 package com.yb.springsecurity.jwt.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -53,7 +53,7 @@ public class SysUser implements Serializable {
     private LocalDateTime createTime;
 
     @ApiModelProperty("用户基本详细信息")
-    @OneToOne(targetEntity = UserInfo.class)
+    @OneToOne(targetEntity =UserInfo.class,mappedBy = "sysUser",fetch = FetchType.EAGER)
     private UserInfo userInfo;
 
     /**

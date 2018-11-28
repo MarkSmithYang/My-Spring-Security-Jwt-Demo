@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yb.springsecurity.jwt.authsecurity.AntiViolenceCheck;
 import com.yb.springsecurity.jwt.authsecurity.ApplicationRunnerImpl;
 import com.yb.springsecurity.jwt.authsecurity.CustomAuthenticationProvider;
@@ -20,6 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +46,12 @@ import java.util.concurrent.TimeUnit;
 @Api("我的controller测试")
 @Controller
 @CrossOrigin//处理跨域
-@RequestMapping("/security")//添加一层路径是必要的
+//@RequestMapping("/security")//添加一层路径是必要的,
+//我现在只在需要放开的接口添加一层共同的路径,便于放开路径/security/login和/security/verifyCode,
+//这种只放开部分接口,在类上加一层路径没什么用处,你还得逐个放开,所以对于需要放开的加就可以了
+//这种方式还有一个弊端,就是因为放开的是/security/**,所以随便一个路径只要在/security下就可以直接跳过
+//拦截,从而报error错误,信息会到error页面去,而不是提示用户去登录,故而感觉还是直接放开指定接口即可,
+//反正接口也不多,而且不容易因为漏掉/security而出现的各种问题.
 public class SecurityJwtController {
     public static final Logger log = LoggerFactory.getLogger(SecurityJwtController.class);
 
@@ -52,11 +62,22 @@ public class SecurityJwtController {
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
 
-    @GetMapping("/login")
-    public String login() {
+    @GetMapping("/toLogin")
+    public String toLogin() {
         return "/login";
     }
 
+    @PreAuthorize("hasAuthority('admin,manager')")//和hasRole功能一样
+    @GetMapping("/logout")
+    public String logout() {
+        //清空用户的登录
+        SecurityContextHolder.getContext().setAuthentication(null);
+        return "/login";
+    }
+
+    //@Secured("admin,manager")//不支持Spring EL表达式
+    //@PostAuthorize("hasAuthority('')")//方法调用之后执行认证
+    @PreAuthorize("hasAuthority('read')")
     @ApiOperation("yes的查询")
     @GetMapping("/yes")
     @ResponseBody
@@ -66,6 +87,7 @@ public class SecurityJwtController {
         }});
     }
 
+    @PreAuthorize("hasPermission('write')")
     @ApiOperation("hello的查询")
     @GetMapping("/hello")
     @ResponseBody
@@ -75,6 +97,7 @@ public class SecurityJwtController {
         }});
     }
 
+    @PreAuthorize("hasAnyRole('admin,manager')")
     @ApiOperation("world的查询")
     @GetMapping("/world")
     @ResponseBody
@@ -84,6 +107,9 @@ public class SecurityJwtController {
         }});
     }
 
+    //@Secured("admin,manager")//不支持Spring EL表达式
+    //@PostAuthorize("hasAuthority('')")//方法调用之后执行认证
+    @PreAuthorize("hasAuthority('')")//方法执行之前执行认证
     @ApiOperation("users的查询")
     @GetMapping("/users")
     @ResponseBody
@@ -103,8 +129,8 @@ public class SecurityJwtController {
     @ApiOperation("前端登录")
     @PostMapping("/frontLogin")
     @ResponseBody
-    public ResultInfo<Token> frontLogin(@Valid UserRequest userRequest, HttpServletRequest request) {
-        Token token = null;
+    public ResultInfo<JSONObject> frontLogin(@Valid UserRequest userRequest, HttpServletRequest request) {
+        Token token = new Token();
         //获取用户名
         String username = userRequest.getUsername();
         //获取用户真实地址
@@ -131,7 +157,9 @@ public class SecurityJwtController {
             //成功登录后清零此ip登录失败的次数
             //AntiViolenceCheck.ipForbiddenClear(request, redisTemplate);
         }
-        return ResultInfo.success(token);
+        //json化对象
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(token);
+        return ResultInfo.success(jsonObject);
     }
 
     //--------------------------------------------------------------------------------------------------------

@@ -2,9 +2,12 @@ package com.yb.springsecurity.jwt.exception;
 
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.hibernate.LazyInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,6 +30,33 @@ public class globalExceptionHandler {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", HttpStatus.BAD_REQUEST.value());
         //这里的获取到的信息就是自定义的信息,因为父类的信息被覆盖了
+        jsonObject.put("message", e.getMessage());
+        return jsonObject;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LazyInitializationException.class)
+    public JSONObject lazyInitializationExceptionHandler(LazyInitializationException e) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", HttpStatus.BAD_REQUEST.value());
+        jsonObject.put("message", e.getMessage());
+        return jsonObject;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public JSONObject httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException e) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", HttpStatus.BAD_REQUEST.value());
+        jsonObject.put("message", e.getMessage());
+        return jsonObject;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RequestRejectedException.class)
+    public JSONObject requestRejectedExceptionExceptionHandler(RequestRejectedException e) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", HttpStatus.BAD_REQUEST.value());
         jsonObject.put("message", e.getMessage());
         return jsonObject;
     }

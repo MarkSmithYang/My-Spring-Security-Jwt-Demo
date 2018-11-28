@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -103,27 +104,4 @@ public class Permission implements Serializable {
         this.permissionCn = permissionCn;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public Set<SysUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<SysUser> users) {
-        this.users = users;
-    }
-
-    public Set<Module> getModules() {
-        return modules;
-    }
-
-    public void setModules(Set<Module> modules) {
-        this.modules = modules;
-    }
 }

@@ -49,8 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @return
      */
     public UserDetails loadUserById(String id) {
-//        SysUser sysUser = sysUserRepository.findById(id).isPresent() ? sysUserRepository.findById(id).get() : null;
-        SysUser sysUser = sysUserRepository.findOne(id);
+        SysUser sysUser = sysUserRepository.findById(id).isPresent() ? sysUserRepository.findById(id).get() : null;
         if (sysUser == null) {
             log.info("通过用户名查询出来的用户的id去查询用户信息为空(数据前后有改动)");
             ParameterErrorException.message("用户名或密码错误");

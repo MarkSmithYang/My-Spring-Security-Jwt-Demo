@@ -14,7 +14,8 @@ import java.util.Set;
  * @date 2018/11/20
  */
 @ApiModel("登录成功后返信息封装类")
-public class Token {
+public class Token implements Serializable{
+    private static final long serialVersionUID = -5100113815346588190L;
 
     /**
      * 用户信息--我这里就只用基本信息了,如果需要用户的详细信息可以自己创建类去封装即可

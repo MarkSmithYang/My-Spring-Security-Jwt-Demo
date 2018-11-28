@@ -7,6 +7,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.Serializable;
 
@@ -40,6 +42,8 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(redisTemplate.getStringSerializer());
         //设置value的序列化
         redisTemplate.setValueSerializer(serializer);
+        //实测证明下面的这种学序列化的方式不太适合其他的方式,比如我存了Integer类型的数据,
+        //获取的时候就会报String不能强转为Integer,而上面的方式是可以的
         //redisTemplate.setValueSerializer(redisTemplate.getStringSerializer());
         //返回模板
         return redisTemplate;

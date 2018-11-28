@@ -1,5 +1,6 @@
 package com.yb.springsecurity.jwt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -40,14 +41,14 @@ public class Role implements Serializable {
      * 角色权限
      */
     @ApiModelProperty("角色权限")
-    @ManyToMany(targetEntity = Permission.class, mappedBy = "roles",fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Permission.class,mappedBy = "roles",fetch = FetchType.EAGER)
     private Set<Permission> permissions;
 
     /**
      * 角色用户
      */
     @ApiModelProperty("角色用户")
-    @ManyToMany(targetEntity = SysUser.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = SysUser.class, fetch = FetchType.LAZY)
     private Set<SysUser> users;
 
     @Override
@@ -102,13 +103,5 @@ public class Role implements Serializable {
 
     public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
-    }
-
-    public Set<SysUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<SysUser> users) {
-        this.users = users;
     }
 }

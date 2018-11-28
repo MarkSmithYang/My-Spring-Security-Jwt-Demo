@@ -1,11 +1,10 @@
 package com.yb.springsecurity.jwt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -32,8 +31,11 @@ public class UserInfo implements Serializable {
     @ApiModelProperty("用户电话")
     private String phone;
 
+    //外键由没有写mappyed的一方维护,建表的时候会多生成一个外键,
+    //直接用这个题是没法封装数据的,因为少了一个属性去封装外键,
+    //当了可以直接用SysUser直接get获取
     @ApiModelProperty("基础用户信息")
-    @OneToOne(targetEntity = SysUser.class, mappedBy = "userInfo")
+    @OneToOne(targetEntity = SysUser.class)
     private SysUser sysUser;
 
     public String getId() {
@@ -68,11 +70,4 @@ public class UserInfo implements Serializable {
         this.phone = phone;
     }
 
-    public SysUser getSysUser() {
-        return sysUser;
-    }
-
-    public void setSysUser(SysUser sysUser) {
-        this.sysUser = sysUser;
-    }
 }

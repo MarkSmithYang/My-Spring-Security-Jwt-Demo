@@ -1,4 +1,4 @@
-package com.yb.springsecurity.jwt;
+package com.yb.springsecurity.jwt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig {
+public class
+SwaggerConfig {
 
     /**
      * swagger2的配置文件，这里可以配置swagger2的一些基本的内容，比如扫描的包等等
@@ -46,7 +47,7 @@ public class SwaggerConfig {
                 //设置文档的描述
                 .description("小demo")
                 //设置文档的联系方式
-                .contact(new Contact("SmithYang", "http://www.baidu.com", ""))
+                .contact(new Contact("SmithYang", "https://swagger.io/", ""))
                 //设置文档的版本信息
                 .version("1.0")
                 //构建

@@ -52,27 +52,36 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 //对请求进行认证
                 .authorizeRequests()
-                //所有带/的请求都放行
-                .antMatchers(HttpMethod.GET, "/**",
+                //所有带/的请求都放行-->可以统一放到配置文件,然后读取过来,那样更方便修改特别是使用云配置的那种更方便
+                .antMatchers(HttpMethod.GET, "/",
                         "/*.html",
-                        "/favicon.ico",
+                        "/**/*.ico",
+                        "/**/*.png",
                         "/**/*.html",
                         "/**/*.css",
-                        "/**/*.js").permitAll()
-                .antMatchers().permitAll()
-                //所有/login的post请求都放行
-                .antMatchers(HttpMethod.POST, "/security/**").permitAll()
-                //访问指定路径的权限校验
-                .antMatchers("/hello").hasAnyAuthority("write")
-                //访问指定路径的权限校验
-                .antMatchers("/yes").hasAnyAuthority("read")
-                //访问指定路径的角色校验
-                .antMatchers("/world").hasRole("admin")
-                //访问指定路径的角色校验(多个角色校验)
-                .antMatchers("/users").hasAnyRole("admin,manager")
-                //访问指定路径的ip地址校验
-                .antMatchers("/yes").hasIpAddress("192.168.11.130")
-                //所有请求需要身份认证
+                        "/**/*.js",
+                        //放开登录和验证码相关的接口(建议不要加层路径例如/security,
+                        //会导致/security下的其他的不想放开的接口被放开等问题,直接放确定的最好,方正也没有几个接口)
+                        "/toLogin", "/frontLogin", "/verifyCode", "/verifyCodeCheck").permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/swagger-resources/configuration/ui",
+                        "/swagge‌​r-ui.html").permitAll()
+//                //访问指定路径的权限校验--这些接口需要的权限可以通过注解@PreAuthorize等来设置
+//                .antMatchers("/hello").hasAnyAuthority("write")
+//                //访问指定路径的权限校验
+//                .antMatchers("/yes").hasAnyAuthority("read")
+//                //访问指定路径的角色校验
+//                .antMatchers("/world").hasRole("admin")
+//                //访问指定路径的角色校验(多个角色校验)
+//                .antMatchers("/users").hasAnyRole("admin,manager")
+//                //访问指定路径的ip地址校验
+//                .antMatchers("/security/yes").hasIpAddress("192.168.11.130")//这个注解目前还没发现,可以在这里设置
+//                //所有请求需要身份认证
                 .anyRequest().authenticated().and()
                 //添加一个过滤器,所有访问/login的请求都交给JWTLoginFilter来处理
                 //这个处理所有JWT相关内容
@@ -89,9 +98,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Spring Security中进行身份验证的是AuthenticationManager接口，ProviderManager是它的一个默认实现，
      * 但它并不用来处理身份认证，而是委托给配置好的AuthenticationProvider，每个AuthenticationProvider
      * 会轮流检查身份认证。检查后或者返回Authentication对象或者抛出异常。
-     *
-     * @param auth
-     * @throws Exception
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

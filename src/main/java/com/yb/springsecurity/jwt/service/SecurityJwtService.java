@@ -87,6 +87,8 @@ public class SecurityJwtService {
             redisTemplate.expire(token, CommonDic.TOKEN_EXPIRE, TimeUnit.MINUTES);
             //设置token信息
             tokenInfo.setToken(token);
+            //返回该数据前,应该把私密信息置空,例如密码
+            sysUser.setPassword(null);
             tokenInfo.setSysUser(sysUser);
             tokenInfo.setRoles(detailsInfo.getRoles());
             tokenInfo.setModules(detailsInfo.getModules());

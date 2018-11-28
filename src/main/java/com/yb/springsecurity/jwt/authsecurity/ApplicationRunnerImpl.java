@@ -39,7 +39,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
             all.forEach(s->{
                 Set<Permission> permissions = s.getPermissions();
                 if(CollectionUtils.isNotEmpty(permissions)){
-                    permissions.forEach(a-> System.err.println(a.getPermission()));
+                    permissions.forEach(a-> System.err.println(s.getModule()+"==="+a.getPermission()));
                 }
             });
         }
