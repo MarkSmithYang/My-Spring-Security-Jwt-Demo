@@ -1,6 +1,7 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yb.springsecurity.jwt.common.ResultInfo;
 import com.yb.springsecurity.jwt.controller.SecurityJwtController;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +41,21 @@ import java.util.List;
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
-    @Autowired
-    private SecurityJwtController securityJwtController;
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException {
-        JSONObject jsonObject = new JSONObject(true);
-        jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
-        jsonObject.put("message", "请登录");
-        //处理输出到页面-->这种方式直接就是把json对象输出到页面,比较原始,不能设置字体颜色等
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-        response.getOutputStream().write(jsonObject.toJSONString().getBytes());
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setStatus(401);
+        ResultInfo info = ResultInfo.status(HttpServletResponse.SC_UNAUTHORIZED).message("请登录");
+        response.getOutputStream().write(JSONObject.toJSON(info).toString().getBytes());
+//        JSONObject jsonObject = new JSONObject(true);
+//        jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
+//        jsonObject.put("message", "请登录");
+//        //处理输出到页面-->这种方式直接就是把json对象输出到页面,比较原始,不能设置字体颜色等
+//        response.setCharacterEncoding("UTF-8");
+//        response.setHeader("Content-Type", "application/json;charset=UTF-8");
+//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//        response.getOutputStream().write(jsonObject.toJSONString().getBytes());
         //通过此方式可以和error.html配置th:text获取值,但是有点难看
         //response.sendError(HttpStatus.UNAUTHORIZED.value(), "请登录");
     }

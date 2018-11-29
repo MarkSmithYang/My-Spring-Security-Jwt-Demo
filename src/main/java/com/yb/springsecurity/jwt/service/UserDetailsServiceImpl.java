@@ -1,23 +1,40 @@
 package com.yb.springsecurity.jwt.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.yb.springsecurity.jwt.common.JwtAudience;
 import com.yb.springsecurity.jwt.exception.ParameterErrorException;
 import com.yb.springsecurity.jwt.model.Permission;
 import com.yb.springsecurity.jwt.model.Role;
 import com.yb.springsecurity.jwt.model.SysUser;
+import com.yb.springsecurity.jwt.model.UserInfo;
 import com.yb.springsecurity.jwt.repository.SysUserRepository;
+import com.yb.springsecurity.jwt.utils.VerifyCodeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -80,6 +97,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         //this(username, password, true, true, true, true, authorities);
         //如果有需要可以在这里设置账户的锁定等信息
+        //这里用了security实现了UserDetails的User没有自己来实现UserDetails来自定义接口扩展内容
         return new User(sysUser.getUsername(), sysUser.getPassword(), authorities);
     }
 }
+

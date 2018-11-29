@@ -1,7 +1,14 @@
 package com.yb.springsecurity.jwt.authsecurity;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.filter.GenericFilterBean;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,6 +16,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author yangbiao
@@ -18,10 +27,13 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        //如果继承了OncePerRequestFilter就不需要强转了
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         //获取请求token认证通过返回的Authentication信息
-        Authentication authentication = TokenAuthenticationService.getAuthentication((HttpServletRequest)request);
-        //把Authentication信息set到SecurityContext里
+        Authentication authentication = TokenAuthenticationService.getAuthentication(request);
+        //把Authentication信息set到SecurityContext里,如果没校验通过返回null也就是用户的认证信息为空
+        //这个用户认证信息(Authentication)是放在ThreadLocal里的
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //执行过滤
         chain.doFilter(request, response);

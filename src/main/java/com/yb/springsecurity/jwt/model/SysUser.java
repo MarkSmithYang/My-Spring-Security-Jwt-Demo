@@ -47,6 +47,12 @@ public class SysUser implements Serializable {
     private String headUrl;
 
     /**
+     * 用户来源--前台/后台/app等
+     */
+    @ApiModelProperty("头像信息")
+    private String from;
+
+    /**
      * 创建时间
      */
     @ApiModelProperty("创建时间")
@@ -181,5 +187,13 @@ public class SysUser implements Serializable {
 
     public void setModules(Set<Module> modules) {
         this.modules = modules;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }

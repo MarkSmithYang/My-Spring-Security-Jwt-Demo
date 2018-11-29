@@ -2,9 +2,7 @@ package com.yb.springsecurity.jwt.authsecurity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yb.springsecurity.jwt.common.ResultInfo;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +32,6 @@ public class TokenAuthenticationService {
 
     /**
      * 生成jwt并写入body
-     *
-     * @param response
-     * @param username
      */
     public static void addAuthentication(HttpServletResponse response, String username) {
         //生成JWT
@@ -63,9 +58,6 @@ public class TokenAuthenticationService {
 
     /**
      * 认证token合法性并返回
-     *
-     * @param request
-     * @return
      */
     public static Authentication getAuthentication(HttpServletRequest request) {
         //从请求头获取token
@@ -86,8 +78,9 @@ public class TokenAuthenticationService {
                     AuthorityUtils.commaSeparatedStringToAuthorityList((String) claims.get("authorities"));
             //返回验证令牌
             return StringUtils.isNotBlank(username) ?
-                    new UsernamePasswordAuthenticationToken(username, null) : null;
+                    new UsernamePasswordAuthenticationToken(username, null, authorities) : null;
         }
         return null;
     }
+
 }

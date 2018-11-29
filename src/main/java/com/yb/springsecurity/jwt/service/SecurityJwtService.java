@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * date 2018/11/21
  */
 @Service
+@RestController
 public class SecurityJwtService {
     public static final Logger log = LoggerFactory.getLogger(SecurityJwtService.class);
 

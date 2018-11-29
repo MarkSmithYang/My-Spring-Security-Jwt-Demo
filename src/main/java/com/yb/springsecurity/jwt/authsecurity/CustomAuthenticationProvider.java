@@ -18,7 +18,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author yangbiao
@@ -64,7 +68,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
         //获取Security自带的详情信息(主要是用户名密码一级一些锁定账户,账户是否可用的信息)
         UserDetails userDetails = userDetailsServiceImpl.loadUserById(sysUser.getId());
-        //获取权限信息-->这里的意思我没有看懂
+        //获取权限信息-->一般来说不去获取UserDetails也没有什么问题,除非想用一些类似于锁定账户等功能的时候
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         //构造token对象
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
