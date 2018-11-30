@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50605
 File Encoding         : 65001
 
-Date: 2018-11-20 18:30:37
+Date: 2018-11-30 10:04:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,9 +21,10 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `module`;
 CREATE TABLE `module` (
 `id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`module`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-`module_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-PRIMARY KEY (`id`)
+`module`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模块英文名' ,
+`module_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模块中文名' ,
+PRIMARY KEY (`id`),
+UNIQUE INDEX `UK_b6xqojmpvvjd685hq3p0itibn` (`module`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -34,7 +35,31 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of module
 -- ----------------------------
 BEGIN;
-INSERT INTO `module` VALUES ('1', 'first', '一级模块'), ('2', 'second', '二级模块');
+INSERT INTO `module` VALUES ('1', '1', '1');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for module_users
+-- ----------------------------
+DROP TABLE IF EXISTS `module_users`;
+CREATE TABLE `module_users` (
+`modules_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`users_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+PRIMARY KEY (`modules_id`, `users_id`),
+FOREIGN KEY (`modules_id`) REFERENCES `module` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+FOREIGN KEY (`users_id`) REFERENCES `sys_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+INDEX `FKraqx5lrta03om9ecwfjej98ky` (`users_id`) USING BTREE 
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+
+;
+
+-- ----------------------------
+-- Records of module_users
+-- ----------------------------
+BEGIN;
+INSERT INTO `module_users` VALUES ('1', '1');
 COMMIT;
 
 -- ----------------------------
@@ -43,9 +68,10 @@ COMMIT;
 DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission` (
 `id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`permission`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-`permission_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-PRIMARY KEY (`id`)
+`permission`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限英文名' ,
+`permission_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限中文名' ,
+PRIMARY KEY (`id`),
+UNIQUE INDEX `UK_9kwkevw5na26e6qb4cbcbxaa4` (`permission`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -56,7 +82,7 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of permission
 -- ----------------------------
 BEGIN;
-INSERT INTO `permission` VALUES ('1', 'write', '写的权限'), ('2', 'read', '读的权限');
+INSERT INTO `permission` VALUES ('1', '1', '1');
 COMMIT;
 
 -- ----------------------------
@@ -80,7 +106,31 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of permission_modules
 -- ----------------------------
 BEGIN;
-INSERT INTO `permission_modules` VALUES ('2', '1'), ('1', '2'), ('2', '2');
+INSERT INTO `permission_modules` VALUES ('1', '1');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for permission_roles
+-- ----------------------------
+DROP TABLE IF EXISTS `permission_roles`;
+CREATE TABLE `permission_roles` (
+`permissions_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`roles_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+PRIMARY KEY (`permissions_id`, `roles_id`),
+FOREIGN KEY (`permissions_id`) REFERENCES `permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+FOREIGN KEY (`roles_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+INDEX `FK9k4j9myvlxs8w8omv4awtpcpo` (`roles_id`) USING BTREE 
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+
+;
+
+-- ----------------------------
+-- Records of permission_roles
+-- ----------------------------
+BEGIN;
+INSERT INTO `permission_roles` VALUES ('1', '1');
 COMMIT;
 
 -- ----------------------------
@@ -104,7 +154,7 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of permission_users
 -- ----------------------------
 BEGIN;
-INSERT INTO `permission_users` VALUES ('2', '1');
+INSERT INTO `permission_users` VALUES ('1', '1');
 COMMIT;
 
 -- ----------------------------
@@ -113,9 +163,10 @@ COMMIT;
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
 `id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`role`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-`role_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-PRIMARY KEY (`id`)
+`role`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色英文名' ,
+`role_cn`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色中文名' ,
+PRIMARY KEY (`id`),
+UNIQUE INDEX `UK_bjxn5ii7v7ygwx39et0wawu0q` (`role`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -126,20 +177,20 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of role
 -- ----------------------------
 BEGIN;
-INSERT INTO `role` VALUES ('1', 'admin', '超级管理员'), ('2', 'manager', '普通管理员');
+INSERT INTO `role` VALUES ('1', '1', '1');
 COMMIT;
 
 -- ----------------------------
--- Table structure for role_permissions
+-- Table structure for role_users
 -- ----------------------------
-DROP TABLE IF EXISTS `role_permissions`;
-CREATE TABLE `role_permissions` (
+DROP TABLE IF EXISTS `role_users`;
+CREATE TABLE `role_users` (
 `roles_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`permissions_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-PRIMARY KEY (`roles_id`, `permissions_id`),
+`users_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+PRIMARY KEY (`roles_id`, `users_id`),
 FOREIGN KEY (`roles_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-FOREIGN KEY (`permissions_id`) REFERENCES `permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-INDEX `FKclluu29apreb6osx6ogt4qe16` (`permissions_id`) USING BTREE 
+FOREIGN KEY (`users_id`) REFERENCES `sys_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+INDEX `FKlt1880i13pllwdmwejekuulqh` (`users_id`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -147,10 +198,10 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 ;
 
 -- ----------------------------
--- Records of role_permissions
+-- Records of role_users
 -- ----------------------------
 BEGIN;
-INSERT INTO `role_permissions` VALUES ('1', '1'), ('1', '2'), ('2', '2');
+INSERT INTO `role_users` VALUES ('1', '1');
 COMMIT;
 
 -- ----------------------------
@@ -159,10 +210,13 @@ COMMIT;
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
 `id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`create_time`  datetime NULL DEFAULT NULL ,
-`password`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-`username`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-PRIMARY KEY (`id`)
+`create_time`  datetime NULL DEFAULT NULL COMMENT '创建时间' ,
+`head_url`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像信息' ,
+`password`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码' ,
+`username`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名' ,
+`from`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户来源--前台/后台/app等' ,
+PRIMARY KEY (`id`),
+UNIQUE INDEX `UK_51bvuyvihefoh4kp5syh2jpi4` (`username`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -173,20 +227,22 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES ('1', '2018-11-19 18:23:06', '$2a$10$sRfyA2LvCWq8iPuSvpQ2UuAVTi2j3gZNJO0FottaUgAFz4TtuOPhm', 'jack'), ('2', '2018-11-19 18:25:44', '$2a$2a$10$ed2cjMldSgM1FE5KpS2ssOGIxXvTwJg.nNH4QpPdeE1B.Q2oF4l1u', 'rose'), ('3', '2018-11-19 18:30:57', '$2a$10$2yhMnQ42FoCvPPB/W8grC.KcduRLQ6W9a2lHGqwRO2q5dECYBKsc.', 'tom'), ('4', '2018-11-19 18:32:24', '$2a$10$4SqRDWt/7l17HADSJ3tuIO8uIfhaYp1mljVaAkcfTfx/N4RC8iSly', 'jerry');
+INSERT INTO `sys_user` VALUES ('1', '2018-11-28 10:03:38', null, '$2a$10$taJbEr6KEj3HlhYxVAFEUOV01Y7ydH8SrJVqki4Pgj9qxV04vMSoK', 'jack', null);
 COMMIT;
 
 -- ----------------------------
--- Table structure for sys_user_roles
+-- Table structure for user_info
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_user_roles`;
-CREATE TABLE `sys_user_roles` (
-`users_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-`roles_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-PRIMARY KEY (`users_id`, `roles_id`),
-FOREIGN KEY (`users_id`) REFERENCES `sys_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-FOREIGN KEY (`roles_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-INDEX `FK91m1qswm862aeo6a3ps1hfc32` (`roles_id`) USING BTREE 
+DROP TABLE IF EXISTS `user_info`;
+CREATE TABLE `user_info` (
+`id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`department`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部门' ,
+`phone`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '电话' ,
+`position`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '职位' ,
+`sys_user_id`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+PRIMARY KEY (`id`),
+FOREIGN KEY (`sys_user_id`) REFERENCES `sys_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+INDEX `FKohdq5x1mqvhojc0mkqafqcphn` (`sys_user_id`) USING BTREE 
 )
 ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
@@ -194,8 +250,8 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 ;
 
 -- ----------------------------
--- Records of sys_user_roles
+-- Records of user_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user_roles` VALUES ('2', '1'), ('3', '2');
+INSERT INTO `user_info` VALUES ('1', '1', '1', '1', '1');
 COMMIT;

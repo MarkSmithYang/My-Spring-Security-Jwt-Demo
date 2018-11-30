@@ -44,18 +44,14 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setStatus(401);
-        ResultInfo info = ResultInfo.status(HttpServletResponse.SC_UNAUTHORIZED).message("请登录");
-        response.getOutputStream().write(JSONObject.toJSON(info).toString().getBytes());
-//        JSONObject jsonObject = new JSONObject(true);
-//        jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
-//        jsonObject.put("message", "请登录");
-//        //处理输出到页面-->这种方式直接就是把json对象输出到页面,比较原始,不能设置字体颜色等
-//        response.setCharacterEncoding("UTF-8");
-//        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//        response.getOutputStream().write(jsonObject.toJSONString().getBytes());
+        JSONObject jsonObject = new JSONObject(true);
+        jsonObject.put("status", HttpStatus.UNAUTHORIZED.value());
+        jsonObject.put("message", "请登录");
+        //处理输出到页面-->这种方式直接就是把json对象输出到页面,比较原始,不能设置字体颜色等
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json;charset=UTF-8");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getOutputStream().write(jsonObject.toJSONString().getBytes());
         //通过此方式可以和error.html配置th:text获取值,但是有点难看
         //response.sendError(HttpStatus.UNAUTHORIZED.value(), "请登录");
     }

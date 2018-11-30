@@ -126,7 +126,7 @@ public class SecurityJwtController {
         System.err.println(s);
     }
 
-    @ApiOperation("前端登录")
+    @ApiOperation("前台登录")
     @PostMapping("/frontLogin")
     @ResponseBody
     public ResultInfo<JSONObject> frontLogin(@Valid UserRequest userRequest, HttpServletRequest request) {

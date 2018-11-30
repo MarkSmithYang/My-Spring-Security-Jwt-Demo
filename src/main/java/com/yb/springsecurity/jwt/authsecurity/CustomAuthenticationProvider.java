@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-    public static final Logger log = LoggerFactory.getLogger(CustomAuthenticationProvider.class);
 
     @Autowired
     private SysUserRepository sysUserRepository;
@@ -72,7 +71,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         //构造token对象
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                userDetails.getUsername(), userDetails.getPassword(), authorities);
+                userDetails.getUsername(), null, authorities);
         //设置用户详情信息
         token.setDetails(userDetails);
         //把相关的用户详情信息(角色权限部门电话等等信息)封装并存入redis里(from作为拼接的字符串)
