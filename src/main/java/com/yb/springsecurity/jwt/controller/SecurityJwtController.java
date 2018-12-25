@@ -1,6 +1,7 @@
 package com.yb.springsecurity.jwt.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.yb.springsecurity.jwt.authsecurity.AntiViolenceCheck;
 import com.yb.springsecurity.jwt.authsecurity.ApplicationRunnerImpl;
 import com.yb.springsecurity.jwt.authsecurity.CustomAuthenticationProvider;
@@ -34,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author yangbiao
@@ -119,11 +120,6 @@ public class SecurityJwtController {
             add("jack");
             add("mark");
         }});
-    }
-
-    public static void main(String[] args) {
-        String s = PasswordEncryptUtils.passwordEncoder("123");
-        System.err.println(s);
     }
 
     @ApiOperation("前台登录")
