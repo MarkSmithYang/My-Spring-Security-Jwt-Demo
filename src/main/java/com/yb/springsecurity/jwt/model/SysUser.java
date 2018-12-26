@@ -55,6 +55,8 @@ public class SysUser implements Serializable {
     /**
      * 创建时间
      */
+    //指定返回的时间格式是yyyy-MM-dd hh:MM:ss,不知道能不能解决,自动建表生成字段的时候是datatime
+    @Temporal(TemporalType.TIMESTAMP)
     @ApiModelProperty("创建时间")
     private LocalDateTime createTime;
 
