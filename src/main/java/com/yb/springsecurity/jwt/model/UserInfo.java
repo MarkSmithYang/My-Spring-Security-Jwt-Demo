@@ -3,6 +3,8 @@ package com.yb.springsecurity.jwt.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +17,10 @@ import java.io.Serializable;
 @Entity
 @Table
 @ApiModel("用户基本详细信息")
+//默认是true,更新的时候只更新修改的那个字段,而不是更新整个表的字段信息,
+//从sql就可以看出,性能可以提高很多,插入也是一样的道理
+@DynamicUpdate
+@DynamicInsert
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = -5866848556563329530L;
 
